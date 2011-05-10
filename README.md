@@ -25,6 +25,8 @@ Install *libgd* on Debian/Ubuntu
 
     apt-get install libgd2-xpm-dev
 
+I had problems using node-gd on mac but on Debian it worked perfectly
+
 Usage
 -----
 
