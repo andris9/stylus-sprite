@@ -1,0 +1,30 @@
+{
+    "name": "stylus-sprite",
+    "description": "Generate sprite images with Stylus",
+    "version": "0.1.0",
+    "author" : "Andris Reinman",
+    "maintainers":[
+        {
+            "name":"andris",
+            "email":"andris@node.ee"
+        }
+    ],
+    "homepage": "http://github.com/andris9/stylus-sprite",
+    "repository" : {
+        "type" : "git",
+        "url" : "http://github.com/andris9/stylus-sprite.git"
+    },
+    "main" : "./stylus-sprite",
+    "licenses" : [
+        {
+            "type": "MIT",
+            "url": "http://github.com/andris9/stylus-sprite/blob/master/LICENSE"
+        }
+    ],
+    "dependencies": {
+        "stylus":"*",
+        "node-gd":"*"
+    },
+    "engine": [ "node >=0.3.0" ],
+    "keywords": ["CSS", "sprite", "sprites", "images"]
+}
