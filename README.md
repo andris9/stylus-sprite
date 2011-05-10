@@ -32,10 +32,44 @@ And the image *sprite.png* would have *star.png* placed on position 25x78 px.
 
 See test folder for complete example.
 
+Dependencies
+------------
+
+  * [stylus](https://github.com/LearnBoost/stylus)
+  * [node-gd](/andris9/node-gd) - GD bindings for Node.JS
+
 JavaScript API
 --------------
 
 Creating the sprite consists of two phases - preparation and rendering.
+
+The first step is to define *StylusSprite* object with required params
+
+    var sprite = new StylusSprite({
+        image_root: "./images",
+        output_file:"sprite.png"
+    });
+
+Second steo would be hooking to the Stylus parsing phase with *Stylus.define*
+
+    stylus...define('sprite', function(filename, option_val){
+            // preparation phase
+            return sprite.spritefunc(filename, option_val);
+        });
+
+A more sane version would be using bound function 
+
+    sprite.spritefunc.bind(sprite, filename, option_val)
+    
+but as Stylus checks for function parameters proxying anonymous function is needed.
+
+Finally when Stylus is finished rendering the CSS *sprite.build* must be run with it. 
+
+    sprite.build(rendered_css, function(err, final_css){
+        console.log(final_css);
+    });
+
+Somewhat complete example:
 
     var stylus = require("stylus"),
         StylusSprite = require("stylus-sprite")
