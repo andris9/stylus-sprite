@@ -10,6 +10,21 @@ Installation
 
     npm install stylus-sprite
 
+Dependencies
+------------
+
+  * [stylus](https://github.com/LearnBoost/stylus)
+  * [node-gd](/andris9/node-gd) - GD bindings for Node.JS. NB! Make sure you have *libgd* installed on yopur system
+
+Install *libgd* on Mac with [homebrew](http://mxcl.github.com/homebrew/)
+ 
+    brew update
+    brew install libgd
+
+Install *libgd* on Debian/Ubuntu
+
+    apt-get install libgd2-xpm-dev
+
 Usage
 -----
 
@@ -31,13 +46,6 @@ After running Stylus-Sprite the resulting CSS would be something like
 And the image *sprite.png* would have *star.png* placed on position 25x78 px.
 
 See test folder for complete example or [kreata.ee/stylus-sprite](http://kreata.ee/stylus-sprite/) for demo.
-
-Dependencies
-------------
-
-  * [stylus](https://github.com/LearnBoost/stylus)
-  * [node-gd](/andris9/node-gd) - GD bindings for Node.JS. NB! Make sure you have *libgd* installed on yopur system
-
 
 CSS API
 -------
