@@ -36,7 +36,36 @@ Dependencies
 ------------
 
   * [stylus](https://github.com/LearnBoost/stylus)
-  * [node-gd](/andris9/node-gd) - GD bindings for Node.JS
+  * [node-gd](/andris9/node-gd) - GD bindings for Node.JS. NB! Make sure you have *libgd* installed on yopur system
+
+
+CSS API
+-------
+
+Function `sprite(filename[, options])` includes the `filename` in the sprite image and replaces `sprite(...)` with the coordinates
+of it.
+
+If `options` param is left empty, no special behavior is added.
+
+    background-position: sprite("tag.png");
+
+`options` is a string similar to html *style* param, keys and values separated with colons and key/value pairs with semicolons.
+
+    background-position: sprite("tag.png","height: 120; repeat: x");
+    
+Possible keys are
+
+  * `width` - width of the image on sprite, defaults to image with
+  * `height` - height of the image on sprite, defaults to image height
+  * `resize` - if `true` then resizes the image to `width` and `height` , defaults to false
+  * `valign` - if `resize` is false and `height` is bigger than image width, place the image to `top`, `middle` or `bottom`, defaults to `top`
+  * `align` - if value is `right` then X coordinate value in CSS will be set to `100%`
+  * `repeat` - if value is `x` then repeats the image from entire width of the canvas or to `limit-repeat-x` value; if value is `y` then repeats the image from current Y position to `limit-repeat-y` value; default is `no`.
+  * `limit-repeat-x` - limit the width of the repeatable area, defaults to 0 (no limit)
+  * `limit-repeat-y` - limit the height of the repeatable area, defaults to 300
+
+NB! All numeric values are plain numeric, no measurement units (defaults to pixels). 
+
 
 JavaScript API
 --------------
