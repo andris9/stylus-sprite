@@ -469,7 +469,7 @@ Sprite.prototype.makeMap = function(css, callback){
     
 
 Sprite.prototype.createImage = function(width, height){
-    var img = gdlib.createTrueColor(width, height);
+    var img = gdlib.create(width, height);
     img.colorTransparent(img.colorAllocateAlpha(0, 0, 0, 127));
     img.alphaBlending(0);
     img.saveAlpha(1);
