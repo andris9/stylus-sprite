@@ -35,7 +35,7 @@
   border: 1px solid #333;
 }
 .aligned_block {
-  background-position: 100% -468px;
+  background-position: -254px -468px;
   background-image: url("sprite.png");
   background-repeat: no-repeat;
   width: 300px;

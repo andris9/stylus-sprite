@@ -248,7 +248,22 @@ Sprite.prototype.processImage = function(imgdata, callback){
     console.log("processing "+imgdata.filename +" ("+imgdata._img_id+")...");
     
     // Open Image
-    gdlib.openPng(pathlib.join(this.image_root, imgdata.filename), (function(err, img, path){
+    var func;
+    switch(imgdata.filename.split(".").pop().toLowerCase()){
+        case "png":
+            func = "openPng";
+            break;
+        case "gif":
+            func = "openGif";
+            break;
+        case "jpg":
+        case "jpeg":
+            func = "openJpeg";
+            break;
+        default:
+            throw new Error("Unknown file type");
+    }
+    gdlib[func](pathlib.join(this.image_root, imgdata.filename), (function(err, img, path){
         
         if(err){
             if(err.message){
@@ -314,7 +329,7 @@ Sprite.prototype.makeMap = function(css, callback){
     
     var currentImageData,  
         blockImage,
-        spriteImage = gdlib.create(this.canvasWidth, this.canvasHeight),
+        spriteImage = this.createImage(this.canvasWidth, this.canvasHeight),
          
         posX, posY, 
         curX=0, curY=0, 
@@ -352,7 +367,7 @@ Sprite.prototype.makeMap = function(css, callback){
         }
 
         // Generate block from image element
-        blockImage = gdlib.create(currentImageData.width, currentImageData.height);
+        blockImage = this.createImage(currentImageData.width, currentImageData.height);
         if(currentImageData.resize){
             // resize image to dimensions
             currentImageData.image.copyResampled(blockImage,
@@ -452,5 +467,12 @@ Sprite.prototype.makeMap = function(css, callback){
     
 }
     
-    
+
+Sprite.prototype.createImage = function(width, height){
+    var img = gdlib.createTrueColor(width, height);
+    img.colorTransparent(img.colorAllocateAlpha(0, 0, 0, 127));
+    img.alphaBlending(0);
+    img.saveAlpha(1);
+    return img;
+}
     
