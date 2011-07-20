@@ -326,8 +326,8 @@ Sprite.prototype.makeMap = function(css, callback){
         spriteImage = this.createImage(this.canvasWidth, this.canvasHeight, this.output_format),
          
         posX, posY, 
-        curX=0, curY=0, 
-        startX=0, startY=0, lineHeight = 0,
+        curX = 0, curY = 0, 
+        startX = 0, startY = 0, lineHeight = 0,
         remainder;
 
     for(var i=0, len = this.processedImages.length; i<len; i++){
@@ -395,6 +395,8 @@ Sprite.prototype.makeMap = function(css, callback){
                 curX = this.canvasWidth - currentImageData.width;
                 break;
             case "left":
+                curX = 0;
+                break;
             default:
                 curX = 0;
         }
@@ -440,13 +442,13 @@ Sprite.prototype.makeMap = function(css, callback){
         
         switch(currentImageData.align){
             case "right":
-                startX = "100%";
+                cssPlacementX = "100%";
                 break;
             case "center":
-                startX = "center";
+                cssPlacementX = "center";
                 break;
         }
-        
+
         css = css.replace(re, cssPlacementX+" "+cssPlacementY);
     }
     
