@@ -448,8 +448,6 @@ Sprite.prototype.makeMap = function(css, callback){
         }
         
         css = css.replace(re, cssPlacementX+" "+cssPlacementY);
-        
-        blockImage.destroy();
     }
     
     // Save to file
