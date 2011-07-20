@@ -1,7 +1,7 @@
 {
     "name": "stylus-sprite",
     "description": "Generate sprite images with Stylus",
-    "version": "0.1.0",
+    "version": "0.1.4",
     "author" : "Andris Reinman",
     "maintainers":[
         {
@@ -22,7 +22,6 @@
         }
     ],
     "dependencies": {
-        "stylus":"*",
         "node-gd":"*"
     },
     "engine": [ "node >=0.3.0" ],
