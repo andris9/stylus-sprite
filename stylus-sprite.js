@@ -1,4 +1,4 @@
-var stylus=require("stylus"),
+var stylus = require("stylus"),
     gdlib = require("node-gd"),
     pathlib = require('path'),
     exec = require("child_process").exec,
@@ -43,6 +43,9 @@ function Sprite(options){
     this.output_format = this.output_file.split(".").pop().toLowerCase() || "png";
     this.pngcrush = this.output_format=="png" && options.pngcrush || false;
     
+    if(["png", "jpeg", "jpg", "gif"].indexOf(this.output_format)<0){
+        throw new Error("Invalid output format '"+this.output_format+"'");
+    }
 }
 
 
@@ -324,7 +327,7 @@ Sprite.prototype.makeMap = function(css, callback){
          
         posX, posY, 
         curX=0, curY=0, 
-        startX=0, startY=0, 
+        startX=0, startY=0, lineHeight = 0,
         remainder;
 
     for(var i=0, len = this.processedImages.length; i<len; i++){
