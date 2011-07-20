@@ -89,7 +89,7 @@ The first step is to define *StylusSprite* object with required params
         output_file:"sprite.png"
     });
 
-Second steo would be hooking to the Stylus parsing phase with *Stylus.define*
+Second step would be hooking to the Stylus parsing phase with *Stylus.define*
 
     stylus...define('sprite', function(filename, option_val){
             // preparation phase
@@ -131,3 +131,13 @@ Somewhat complete example:
                 console.log(css);
             });
         });
+
+## Pngcrush
+
+If you have [Pngcrush](http://pmt.sourceforge.net/pngcrush/) installed in your system, you can use it to optimize generated PNG images.
+
+    var sprite = new StylusSprite({
+        image_root: "./images",
+        output_file:"sprite.png",
+        pngcrush: "pngcrush" // path to pngcrush command
+    });

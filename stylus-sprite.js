@@ -1,6 +1,8 @@
 var stylus=require("stylus"),
     gdlib = require("node-gd"),
-    pathlib = require('path');
+    pathlib = require('path'),
+    exec = require("child_process").exec,
+    fs = require("fs");
 
 module.exports = Sprite;
 
@@ -37,6 +39,10 @@ function Sprite(options){
     
     this.image_root = options.image_root || "";
     this.output_file = options.output_file || "sprite.png";
+    
+    this.output_format = this.output_file.split(".").pop().toLowerCase() || "png";
+    this.pngcrush = this.output_format=="png" && options.pngcrush || false;
+    
 }
 
 
@@ -248,22 +254,7 @@ Sprite.prototype.processImage = function(imgdata, callback){
     console.log("processing "+imgdata.filename +" ("+imgdata._img_id+")...");
     
     // Open Image
-    var func;
-    switch(imgdata.filename.split(".").pop().toLowerCase()){
-        case "png":
-            func = "openPng";
-            break;
-        case "gif":
-            func = "openGif";
-            break;
-        case "jpg":
-        case "jpeg":
-            func = "openJpeg";
-            break;
-        default:
-            throw new Error("Unknown file type");
-    }
-    gdlib[func](pathlib.join(this.image_root, imgdata.filename), (function(err, img, path){
+    this.openImage(pathlib.join(this.image_root, imgdata.filename), (function(err, img, path){
         
         if(err){
             if(err.message){
@@ -329,7 +320,7 @@ Sprite.prototype.makeMap = function(css, callback){
     
     var currentImageData,  
         blockImage,
-        spriteImage = this.createImage(this.canvasWidth, this.canvasHeight),
+        spriteImage = this.createImage(this.canvasWidth, this.canvasHeight, this.output_format),
          
         posX, posY, 
         curX=0, curY=0, 
@@ -382,13 +373,11 @@ Sprite.prototype.makeMap = function(css, callback){
                 );
         }else{
             // copy and place in actual dimension (if fits)
-            currentImageData.image.copyResampled(blockImage,
+            currentImageData.image.copy(blockImage,
                 posX, // dstX
                 posY, // dstY
                 0,    // srcX
                 0,    // srcY
-                currentImageData.imageWidth,  // dstWidth
-                currentImageData.imageHeight, // dstHeight
                 currentImageData.imageWidth,  // srcWidth
                 currentImageData.imageHeight  // srcHeight
             );
@@ -413,7 +402,7 @@ Sprite.prototype.makeMap = function(css, callback){
         // REPEAT:NO
         // copy block to sprite (position curX,curY)
         if(currentImageData.repeat=="no"){
-            blockImage.copyResampled(spriteImage, curX, curY, 0, 0, currentImageData.width, currentImageData.height, currentImageData.width, currentImageData.height);
+            blockImage.copy(spriteImage, curX, curY, 0, 0, currentImageData.width, currentImageData.height);
             curY += currentImageData.height + this.padding;
         }
         
@@ -424,7 +413,7 @@ Sprite.prototype.makeMap = function(css, callback){
             startX = 0;
             while(curX<currentImageData.blockWidth){
                 remainder = curX + currentImageData.width<currentImageData.blockWidth?currentImageData.width:currentImageData.blockWidth-curX;
-                blockImage.copyResampled(spriteImage, curX, curY, 0, 0, remainder, currentImageData.height, remainder, currentImageData.height);
+                blockImage.copy(spriteImage, curX, curY, 0, 0, remainder, currentImageData.height);
                 curX += currentImageData.width;
             }
             curY += currentImageData.height + this.padding;
@@ -435,7 +424,7 @@ Sprite.prototype.makeMap = function(css, callback){
         if(currentImageData.repeat=="y"){
             while(curY < startY + currentImageData.blockHeight){
                 remainder = curY + currentImageData.height<startY + currentImageData.blockHeight?currentImageData.height:startY + currentImageData.blockHeight-curY;
-                blockImage.copyResampled(spriteImage, curX, curY, 0, 0, currentImageData.width, remainder, currentImageData.width, remainder);
+                blockImage.copy(spriteImage, curX, curY, 0, 0, currentImageData.width, remainder);
                 curY += remainder;
             }
             curY += this.padding;
@@ -457,22 +446,88 @@ Sprite.prototype.makeMap = function(css, callback){
         
         css = css.replace(re, cssPlacementX+" "+cssPlacementY);
         
+        blockImage.destroy();
     }
     
     // Save to file
-    spriteImage.savePng(this.output_file, 0, function(){
-        console.log("CSS processed")
+    var save_callback = function(){
+        console.log("CSS processed");
         callback(null, css);
-    });
+    }
     
+    switch(this.output_format){
+        case "gif":
+            spriteImage.saveGif(this.output_file, save_callback.bind(this));
+            break;
+        case "jpg":
+        case "jpeg":
+            spriteImage.saveJpeg(this.output_file, 80, save_callback.bind(this));
+            break;
+        case "png":
+        default:
+            spriteImage.savePng(this.output_file, 0, (function(){
+                var tmp_name = this.output_file + "_tmp" + Date.now();
+                if(this.pngcrush){
+                    fs.rename(this.output_file, tmp_name, (function(err){
+                        if(err){
+                            throw err;
+                        }
+                        exec(this.pngcrush+" "+tmp_name+" "+this.output_file, function(err){
+                            fs.unlink(tmp_name);
+                            if(err){
+                                throw err;
+                            }
+                            console.log("PNG crushed!");
+                            save_callback();
+                        });    
+                    }).bind(this));
+                }else{
+                    save_callback();
+                }
+            }).bind(this));
+            
+    }
 }
-    
 
-Sprite.prototype.createImage = function(width, height){
-    var img = gdlib.create(width, height);
-    img.colorTransparent(img.colorAllocateAlpha(0, 0, 0, 127));
-    img.alphaBlending(0);
-    img.saveAlpha(1);
+Sprite.prototype.openImage = function(image, callback){
+    var func;
+    switch(image.split(".").pop().toLowerCase()){
+        case "png":
+            func = "openPng";
+            break;
+        case "gif":
+            func = "openGif";
+            break;
+        case "jpg":
+        case "jpeg":
+            func = "openJpeg";
+            break;
+        default:
+            throw new Error("Unknown file type");
+    }
+    gdlib[func](image, function(err, img, path){
+        callback(err, img, path);
+    });
+}    
+
+Sprite.prototype.createImage = function(width, height, format){
+    format = format || "png";
+
+    // the image can not be too small to have transparency
+    width = Math.max(width, 5);
+    height = Math.max(height, 5);
+    
+    var img = gdlib.createTrueColor(width, height),
+        transparent = format == "gif" && img.colorAllocate(112, 121, 211) || img.colorAllocateAlpha(0, 0, 0, 127);
+    
+    img.fill(0, 0, transparent);
+    img.colorTransparent(transparent);
+    
+    if(format == "png"){
+        img.alphaBlending(0);
+        img.saveAlpha(1);
+    }
+    
     return img;
 }
     
