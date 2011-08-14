@@ -2,7 +2,7 @@ Stylus-Sprite
 =============
 
 **Stylus-Sprite** is an extension for [Stylus](https://github.com/LearnBoost/stylus) which makes sprite images from Stylus tags. 
-Actually it takes a image file (currently only PNG's are supported), places it to a sprite image and replaces the original
+Actually it takes a image file, places it to a sprite image and replaces the original
 pointer in the CSS file with position coordinates according to the sprite image.
 
 Installation
