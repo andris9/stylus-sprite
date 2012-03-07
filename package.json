@@ -22,7 +22,7 @@
         }
     ],
     "dependencies": {
-        "node-gd":"*"
+        "node-gd":"git://github.com/sjulean/node-gd.git"
     },
     "engine": [ "node >=0.3.0" ],
     "keywords": ["CSS", "sprite", "sprites", "images"]
