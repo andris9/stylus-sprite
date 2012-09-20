@@ -47,8 +47,6 @@ After running Stylus-Sprite the resulting CSS would be something like
 
 And the image *sprite.png* would have *star.png* placed on position 25x78 px.
 
-See test folder for complete example or [kreata.ee/stylus-sprite](http://kreata.ee/stylus-sprite/) for demo.
-
 CSS API
 -------
 
