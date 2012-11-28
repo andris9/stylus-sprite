@@ -83,6 +83,18 @@ Sprite.prototype.keys = {
     },
     "limit-repeat-y":{
         type:"number"
+    },
+    "totalwidth":{
+        type:"number"
+    },
+    "totalheight":{
+        type:"number"
+    },
+    "padwidth":{
+        type:"number"
+    },
+    "padheight":{
+        type:"number"
     }
 };
 
@@ -438,7 +450,7 @@ Sprite.prototype.makeMap = function(css, callback){
         }
 
         // Replace placeholders from CSS with real positions
-        var re = new RegExp(this.placeholder+"\\("+currentImageData._img_id+"\\)","g"),
+        var re = new RegExp("'" + this.placeholder+"\\("+currentImageData._img_id+"\\)'","g"),
             cssPlacementX = "-"+startX+"px",
             cssPlacementY = "-"+startY+"px";
 
@@ -451,7 +463,42 @@ Sprite.prototype.makeMap = function(css, callback){
                 break;
         }
 
-        css = css.replace(re, cssPlacementX+" "+cssPlacementY);
+        /* Support generating padding, width and height for the element
+         * as a function of the image size.
+         * This may be useful if the image sizes may change and you
+         * don't want to hardcode them into the CSS file. */
+        if ( currentImageData.totalwidth && currentImageData.totalheight ) {
+          var imgw = currentImageData.imageWidth,
+              imgh = currentImageData.imageHeight,
+              // Calculate the total size of the margins
+              margw = currentImageData.totalwidth - imgw,
+              margh = currentImageData.totalheight - imgh,
+              // Calculate the actual margins
+              margtop = Math.floor((margh+1)/2),
+              margright = Math.floor(margw/2),
+              margbottom = Math.floor(margh/2),
+              margleft = Math.floor((margw+1)/2);
+
+          /* If the element for which we're computing the background has
+           * a non-zero padding and/or border, we need to add the size
+           * difference to the generated element width/height, to comply with
+           * the CSS box model. */
+          if ( currentImageData.padwidth ) {
+            imgw += currentImageData.padwidth;
+          }
+          if ( currentImageData.padheight ) {
+            imgh += currentImageData.padheight;
+          }
+
+          var appendMargin = ';margin:' + margtop + 'px ' + margright + 'px ' +
+                  margbottom + 'px ' + margleft + 'px !important;' +
+                  'height:' + imgh + 'px !important;' +
+                  'width:' + imgw + 'px !important';
+        } else {
+          var appendMargin = '';
+        }
+
+        css = css.replace(re, cssPlacementX+" "+cssPlacementY+appendMargin);
     }
 
     // Save to file
