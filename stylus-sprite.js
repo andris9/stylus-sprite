@@ -450,7 +450,7 @@ Sprite.prototype.makeMap = function(css, callback){
         }
 
         // Replace placeholders from CSS with real positions
-        var re = new RegExp(this.placeholder+"\\("+currentImageData._img_id+"\\)","g"),
+        var re = new RegExp("'" + this.placeholder+"\\("+currentImageData._img_id+"\\)'","g"),
             cssPlacementX = "-"+startX+"px",
             cssPlacementY = "-"+startY+"px";
 
