@@ -1,3 +1,8 @@
+Deprecated module
+=================
+
+This module has been deprecated in favor of [stylus-lemonade](https://github.com/mikesmullin/stylus-lemonade).
+
 Stylus-Sprite
 =============
 
